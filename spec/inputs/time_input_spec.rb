@@ -92,6 +92,17 @@ describe 'time input' do
         output_buffer.should have_tag("form li ol li select#post_created_at_4i option[@selected]", :count => 1)
         output_buffer.should have_tag("form li ol li select#post_created_at_4i option[@value='21'][@selected]", :count => 1)
       end
+
+      it "should select nothing if :selected is explicitly set to nil" do
+        output_buffer.replace ''
+        @new_post.stub!(:created_at => Time.mktime(2012, 11, 30, 21, 45))
+        with_deprecation_silenced do 
+          semantic_form_for(@new_post) do |builder|
+            concat(builder.input(:created_at, :as => :time, :selected => nil))
+          end
+        end
+        output_buffer.should have_tag("form li ol li select#post_created_at_1i option[@selected]", :count => 0)
+      end
     end
     
     describe 'when the object has no value' do
